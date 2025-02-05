@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        @keyframes sway {
+            0% { transform: rotate(0deg); }
+            50% { transform: rotate(2deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        @keyframes petalWave {
+            0% { transform: rotate(var(--rotation)) scale(1); }
+            50% { transform: rotate(calc(var(--rotation) + 2deg)) scale(1.05); }
+            100% { transform: rotate(var(--rotation)) scale(1); }
+        }
+
+        @keyframes centerSpin {
+            0% { transform: rotate(0deg); }
+            /* 100% { transform: rotate(360deg); } */
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes shine {
+            0% { background-position: -100% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .card-container {
+            width: 300px;
+            margin: 50px auto;
+            text-align: center;
+            font-family: 'Arial', sans-serif;
+            padding: 20px;
+            background-color: #fff5f5;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .sunflower {
+            width: 200px;
+            height: 300px;
+            margin: 20px auto;
+            position: relative;
+            animation: sway 3s ease-in-out infinite;
+            transform-origin: bottom center;
+        }
+
+        .flower {
+            width: 150px;
+            height: 150px;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .center {
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, #654321 30%, #8B4513 70%);
+            border-radius: 50%;
+            position: absolute;
+            top: 80px;
+            left: 45px;
+            z-index: 2;
+            animation: centerSpin 20s linear infinite;
+        }
+
+        .petals {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .petal {
+            position: absolute;
+            width: 60px;
+            height: 20px;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%;
+            top: 95px;
+            left: 75px;
+            transform-origin: left center;
+            animation: petalWave 2s ease-in-out infinite;
+            animation-delay: calc(var(--delay) * -0.1s);
+        }
+
+        .stem {
+            width: 8px;
+            height: 120px;
+            background: linear-gradient(to right, #228B22, #32CD32, #228B22);
+            margin: -10px auto 0;
+            position: relative;
+            transform-origin: bottom center;
+        }
+
+        .leaf {
+            position: absolute;
+            width: 30px;
+            height: 15px;
+            background: #228B22;
+            border-radius: 0 50% 0 50%;
+            animation: sway 2s ease-in-out infinite;
+            transform-origin: center left;
+        }
+
+        .leaf.left {
+            left: -25px;
+            top: 40px;
+            animation-delay: -0.5s;
+        }
+
+        .leaf.right {
+            right: -25px;
+            top: 70px;
+            transform: scaleX(-1);
+            animation-delay: -1s;
+        }
+
+        .pot {
+            width: 70px;
+            height: 60px;
+            background: linear-gradient(45deg, #c96721, #A0522D, #8B4513);
+            margin: -5px auto 0;
+            border-radius: 5px 5px 35px 35px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pot::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shine 3s linear infinite;
+        }
+
+        .message {
+            font-size: 18px;
+            color: #FF69B4;
+            margin: 20px 0;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        .download-btn {
+            background: linear-gradient(45deg, #FF69B4, #FF1493);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255,105,180,0.4);
+        }
+
+        .face {
+            position: absolute;
+            width: 30px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+        }
+
+        .eye {
+            width: 4px;
+            height: 4px;
+            background: #333;
+            border-radius: 50%;
+            position: absolute;
+            top: 5px;
+            animation: blink 3s infinite;
+        }
+
+        @keyframes blink {
+            0%, 96%, 98% { transform: scaleY(1); }
+            97% { transform: scaleY(0); }
+        }
+
+        .eye.left {
+            left: 6px;
+        }
+
+        .eye.right {
+            right: 6px;
+        }
+
+        .smile {
+            width: 16px;
+            height: 8px;
+            border-bottom: 2px solid #333;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 2px;
+            left: 7px;
+            animation: smile 3s ease-in-out infinite;
+        }
+
+        @keyframes smile {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+    </style>
+</head>
+<body>
+    
+
+    <div class="card-container">
+        <div class="sunflower">
+            <div class="flower">
+                <div class="petals" id="petalsContainer">
+                    <!-- Los pétalos se generarán con JavaScript -->
+                </div>
+                <div class="center">
+                    <div class="face">
+                        <div class="eye left"></div>
+                        <div class="eye right"></div>
+                        <div class="smile"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="stem">
+                <div class="leaf left"></div>
+                <div class="leaf right"></div>
+            </div>
+            <div class="pot"></div>
+        </div>
+        <div class="message">
+            ¿Quieres ser mi San Valentín? 🌻❤️
+        </div>
+        <button class="download-btn" id="downloadBtn">Carta ↓</button>
+    </div>
+
+    <script>
+        // Asegurarnos de que el DOM esté cargado
+        document.addEventListener('DOMContentLoaded', function() {
+            // Generar pétalos
+            const petalsContainer = document.getElementById('petalsContainer');
+            const numPetals = 16;
+            
+            for (let i = 0; i < numPetals; i++) {
+                const petal = document.createElement('div');
+                petal.className = 'petal';
+                const rotation = (i * (360 / numPetals));
+                petal.style.setProperty('--rotation', `${rotation}deg`);
+                petal.style.setProperty('--delay', `${i}`);
+                petal.style.transform = `rotate(${rotation}deg)`;
+                petalsContainer.appendChild(petal);
+            }
+
+            // Configurar el botón de descarga
+            document.getElementById('downloadBtn').addEventListener('click', function() {
+                generatePDF();
+            });
+        });
+
+        // Función para generar el PDF
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Configurar el PDF
+            doc.setFillColor(255, 245, 245);
+            doc.rect(0, 0, 210, 297, 'F');
+            
+            // Título
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(24);
+            doc.setTextColor(255, 105, 180);
+            doc.text('Mi Carta de San Valentín', 105, 30, { align: 'center' });
+            
+            // Mensaje principal
+            doc.setFontSize(18);
+            doc.text('¿Quieres ser mi San Valentín?', 105, 60, { align: 'center' });
+            
+            // Emoji de corazón
+            doc.setFontSize(30);
+            doc.text('❤️', 105, 80, { align: 'center' });
+            
+            // Mensaje personalizado
+            doc.setFontSize(14);
+            doc.setTextColor(0, 0, 0);
+            const mensaje = `
+                Amor de mi vida,
+
+                Me encantaría compartir este día tan especial contigo.
+                Cada momento a tu lado es único y especial.
+                
+                Con cariño,
+                
+                Aldair Gonzales
+            `;
+            
+            const splitText = doc.splitTextToSize(mensaje, 170);
+            doc.text(splitText, 20, 100);
+            
+            // Fecha
+            const fecha = new Date().toLocaleDateString();
+            doc.setFontSize(12);
+            doc.text(fecha, 20, 250);
+            
+            // Descargar el PDF
+            doc.save('carta_san_valentin.pdf');
+        }
+    </script> 
+</body>
+</html>
